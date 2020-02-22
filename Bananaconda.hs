@@ -1,8 +1,8 @@
 module Bananaconda where
 
+type Stack = [Cmd]
 
-
-data Stack = PushS String
+data Cmd = PushS String
          | PushB Bool
          | Add
          | Drop
