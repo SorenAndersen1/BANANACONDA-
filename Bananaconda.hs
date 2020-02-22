@@ -7,7 +7,7 @@ data Cmd = PushS String
          | Add
          | Drop
          | Equ
-         | IfElse Prog Prog
+         | IfElse Stack Stack
          | Size_of_stack
          | Error
   deriving (Eq,Show)
