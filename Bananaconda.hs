@@ -1,9 +1,15 @@
 module Bananaconda where
 
 
-type Load = Stack -> Maybe Stack
-type Stack = [Either Int String]
+
 type Prog = [Cmd]
+
+
+type Load = Stack -> Maybe Stack
+
+type Stack = [Either Int String]
+
+
 
 
 
@@ -12,40 +18,49 @@ data Cmd = PushS String -- Grace
          | Add -- Soren
          | Drop -- Grace
          | Equ -- Grace
+
          | IfElse Prog Prog -- Brian
          | Size_of_stack -- Reed
          | Error -- Brian
          | Randverb Int
+         | Randnoun Int
+         | Randadj  Int
   deriving (Eq,Show)
 verblist = ["chase", "question", "reach", "kick", "yell"]
 nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
+adjectivelist = ["jumpy", "slimy", "moist", "cold", "hot", "bright", "hairy", "sticky", "loud", "colorful", "comfy", "soft", "hard", "lumpy", "long"]
 
---Size_of_stack :: Stack -> Int
---Size_of_stack []      = 0
---Size_of_stack (x:xs)  = 1 + Size_of_stack xs
+size_of_stack :: Stack -> Int
+size_of_stack []      = 0
+size_of_stack (x:xs)  = 1 + size_of_stack xs
 
 cmd :: Cmd -> Load
-cmd Add            = \x -> case x of
+cmd Add         = \x -> case x of
                            (Right i : Right j : x') -> Just (Right (j ++ " " ++ i ) : x')
                            _ -> Nothing
-
+                           
 cmd (Randverb y)   = \x -> case x of
                            (Right i : Right j : x') -> Just (Right (randverb verblist y) : x')
                            _ -> Nothing
-
+                           
+cmd (Randnoun y)   = \x -> case x of
+                           (Right i : Right j : x') -> Just (Right (j ++ " " ++ (randword nounlist y) ++ " " ++ i) : x')
+                           _ -> Nothing
+                           
+cmd (Randadj y)   = \x -> case x of
+                           (Right i : Right j : x') -> Just (Right (j ++ " " ++ (randword adjectivelist y) ++ " " ++ i) : x')
+                           _ -> Nothing
+                           
 cmd (IfElse s ss) = \x -> case x of
                         (Left 1 : x') -> prog s x'   --true
                         (Left 0 : x') -> prog ss x'  --false
                         _ -> Nothing
+                        
 
 
-randverb :: [String] -> Int -> String
-randverb [] _ = " "
-randverb x y = x !! y
-
---make_IO :: [String] -> IO [String]
-
-
+randword :: [String] -> Int -> String
+randword [] _ = " "
+randword x y = x !! y
 
 prog :: Prog -> Load
 prog []       = \s -> Just s               -- when empty stack return stack
@@ -53,4 +68,3 @@ prog (c:p)    = \s -> case cmd c s of
                     Just s' -> prog p s'    --if cmd c s succeeds it returns a Just s', -> recursive call to rest of stack
                     _ -> Nothing
 
-ex2 = [PushB True, IfElse [PushS "5", PushS "6", Add] [PushS "11"]]
