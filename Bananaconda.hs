@@ -32,7 +32,7 @@ cmd Add         = \x -> case x of
 cmd Randverb    = \x -> case x of
                            (Right i : Right j : x') -> Just (Right (randverb verblist) : x')
                            _ -> Nothing 
-
+cmd PushB       = \x -> Just ()
 --make_IO :: [String] -> IO [String]
 
 
