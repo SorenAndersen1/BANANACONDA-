@@ -2,10 +2,12 @@ module Bananaconda where
 
 
 
+
 type Prog = [Cmd]
 
 
 type Load = Stack -> Maybe Stack
+
 
 type Stack = [Either Int String]
 
@@ -13,8 +15,10 @@ type Stack = [Either Int String]
 
 
 
+
+
 data Cmd = PushS String -- Grace
-         | PushB Bool -- Grace
+         | PushI Int -- Grace
          | Add -- Soren
          | Drop -- Grace
          | Equ -- Grace
@@ -34,11 +38,15 @@ size_of_stack :: Stack -> Int
 size_of_stack []      = 0
 size_of_stack (x:xs)  = 1 + size_of_stack xs
 
+
 cmd :: Cmd -> Load
 cmd Add         = \x -> case x of
                            (Right i : Right j : x') -> Just (Right (j ++ " " ++ i ) : x')
                            _ -> Nothing
-                           
+
+cmd (PushS s) = \x -> Just (Right s : x)
+cmd (PushI i) = \x -> Just (Left i : x)
+
 cmd (Randverb y)   = \x -> case x of
                            (Right i : Right j : x') -> Just (Right (randword verblist y) : x')
                            _ -> Nothing
@@ -67,4 +75,8 @@ prog []       = \s -> Just s               -- when empty stack return stack
 prog (c:p)    = \s -> case cmd c s of
                     Just s' -> prog p s'    --if cmd c s succeeds it returns a Just s', -> recursive call to rest of stack
                     _ -> Nothing
+
+drop :: Stack -> Stack
+drop [] = [Left 0] --might have to change to error (underflow)
+drop (x : stack) = stack
 
