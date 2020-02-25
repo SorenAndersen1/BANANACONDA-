@@ -1,6 +1,5 @@
 module Bananaconda where
 
-import System.Random
 
 
 type Load = Stack -> Maybe Stack
@@ -16,7 +15,7 @@ data Cmd = PushS String -- Grace
          | IfElse Stack Stack -- Brian
          | Size_of_stack -- Reed
          | Error -- Brian
-         | Randverb
+         | Randverb Int
   deriving (Eq,Show)
 verblist = ["chase", "question", "reach", "kick", "yell"]
 --
@@ -29,23 +28,16 @@ cmd Add         = \x -> case x of
                            (Right i : Right j : x') -> Just (Right (j ++ " " ++ i ) : x')
                            _ -> Nothing    
 
-cmd Randverb    = \x -> case x of
-                           (Right i : Right j : x') -> Just (Right (randverb verblist) : x')
+cmd (Randverb y)   = \x -> case x of
+                           (Right i : Right j : x') -> Just (Right (randverb verblist y) : x')
                            _ -> Nothing 
-cmd PushB       = \x -> Just ()
+
+randverb :: [String] -> Int -> String
+randverb [] _ = " "
+randverb x y = x !! y 
+
 --make_IO :: [String] -> IO [String]
 
-
-
-randverbsec :: Int -> String
-randverbsec _ = "Work"
-
-
-randverb ::  [a] -> IO a
-randverb q = do
-         z <- randomRIO (1, 15) :: IO Int
-         return (q !! z)
---randverb IO 2 = "chase"
 
 
 
