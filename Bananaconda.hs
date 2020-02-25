@@ -3,7 +3,9 @@ module Bananaconda where
 
 
 type Load = Stack -> Maybe Stack
-type Stack = [Either (Bool,Int) String]
+
+type Stack = [Either Int String]
+
 
 
 
@@ -13,12 +15,14 @@ data Cmd = PushS String -- Grace
          | Drop -- Grace
          | Equ -- Grace
          | IfElse Stack Stack -- Brian
-         | Size_of_stack -- Reed
          | Error -- Brian
          | Randverb Int
+         | Randnoun Int
+         | Randadj  Int
   deriving (Eq,Show)
-verblist =      ["chase", "question", "reach", "kick", "yell"]
-nounlist =      ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
+verblist = ["chase", "question", "reach", "kick", "yell"]
+nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
+
 adjectivelist = ["jumpy", "slimy", "moist", "cold", "hot", "bright", "hairy", "sticky", "loud", "colorful", "comfy", "soft", "hard", "lumpy", "long"]
 
 size_of_stack :: Stack -> Int
@@ -31,11 +35,18 @@ cmd Add         = \x -> case x of
                            _ -> Nothing
 
 cmd (Randverb y)   = \x -> case x of
-                           (Right i : Right j : x') -> Just (Right (randverb verblist y) : x')
+
+                           (Right i : Right j : x') -> Just (Right (j ++ " " ++ (randword verblist y) ++ " " ++ i) : x')
+                           _ -> Nothing
+cmd (Randnoun y)   = \x -> case x of
+                           (Right i : Right j : x') -> Just (Right (j ++ " " ++ (randword nounlist y) ++ " " ++ i) : x')
+                           _ -> Nothing
+cmd (Randadj y)   = \x -> case x of
+                           (Right i : Right j : x') -> Just (Right (j ++ " " ++ (randword adjectivelist y) ++ " " ++ i) : x')
                            _ -> Nothing
 
-randverb :: [String] -> Int -> String
-randverb [] _ = " "
-randverb x y = x !! y
+randword :: [String] -> Int -> String
+randword [] _ = " "
+randword x y = x !! y
 
---make_IO :: [String] -> IO [String]
+
