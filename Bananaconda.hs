@@ -5,7 +5,7 @@ module Bananaconda where
 type Load = Stack -> Maybe Stack
 type Stack = [Either Stack_Bools_Ints String]
 type Stack_Bools_Ints = Either Bool Int
- 
+
 
 data Cmd = PushS String -- Grace
          | PushB Bool -- Grace
@@ -18,26 +18,23 @@ data Cmd = PushS String -- Grace
          | Randverb Int
   deriving (Eq,Show)
 verblist = ["chase", "question", "reach", "kick", "yell"]
---
+nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
 
-
-
+Size_of_stack :: Stack -> Int
+Size_of_stack []      = 0
+Size_of_stack (x:xs)  = 1 + Size_of_stack xs
 
 cmd :: Cmd -> Load
 cmd Add         = \x -> case x of
                            (Right i : Right j : x') -> Just (Right (j ++ " " ++ i ) : x')
-                           _ -> Nothing    
+                           _ -> Nothing
 
 cmd (Randverb y)   = \x -> case x of
                            (Right i : Right j : x') -> Just (Right (randverb verblist y) : x')
-                           _ -> Nothing 
+                           _ -> Nothing
 
 randverb :: [String] -> Int -> String
 randverb [] _ = " "
-randverb x y = x !! y 
+randverb x y = x !! y
 
 --make_IO :: [String] -> IO [String]
-
-
-
-
