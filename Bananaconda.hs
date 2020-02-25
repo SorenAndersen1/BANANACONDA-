@@ -40,7 +40,7 @@ cmd Add         = \x -> case x of
                            _ -> Nothing
                            
 cmd (Randverb y)   = \x -> case x of
-                           (Right i : Right j : x') -> Just (Right (randverb verblist y) : x')
+                           (Right i : Right j : x') -> Just (Right (randword verblist y) : x')
                            _ -> Nothing
                            
 cmd (Randnoun y)   = \x -> case x of
