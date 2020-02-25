@@ -1,9 +1,8 @@
 module Bananaconda where
 
 
-
 type Load = Stack -> Maybe Stack
-type Stack = [Either (Bool,Int) String]
+type Stack = [Either Int String]
 type Prog = [Cmd]
 
 
@@ -26,7 +25,7 @@ nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", 
 --Size_of_stack (x:xs)  = 1 + Size_of_stack xs
 
 cmd :: Cmd -> Load
-cmd Add         = \x -> case x of
+cmd Add            = \x -> case x of
                            (Right i : Right j : x') -> Just (Right (j ++ " " ++ i ) : x')
                            _ -> Nothing
 
@@ -35,8 +34,8 @@ cmd (Randverb y)   = \x -> case x of
                            _ -> Nothing
 
 cmd (IfElse s ss) = \x -> case x of
-                        (Left (True, _)  : x') -> prog s x'
-                        (Left (False, _) : x') -> prog ss x'
+                        (Left 1 : x') -> prog s x'   --true
+                        (Left 0 : x') -> prog ss x'  --false
                         _ -> Nothing
 
 
