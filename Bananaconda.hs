@@ -3,8 +3,8 @@ module Bananaconda where
 
 
 type Load = Stack -> Maybe Stack
-type Stack = [Either Stack_Bools_Ints String]
-type Stack_Bools_Ints = Either Bool Int
+type Stack = [Either (Bool,Int) String]
+
 
 
 data Cmd = PushS String -- Grace
