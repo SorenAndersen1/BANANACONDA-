@@ -3,7 +3,9 @@ module Bananaconda where
 
 
 type Load = Stack -> Maybe Stack
+
 type Stack = [Either Int String]
+
 
 
 
@@ -20,6 +22,7 @@ data Cmd = PushS String -- Grace
   deriving (Eq,Show)
 verblist = ["chase", "question", "reach", "kick", "yell"]
 nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
+
 adjectivelist = ["jumpy", "slimy", "moist", "cold", "hot", "bright", "hairy", "sticky", "loud", "colorful", "comfy", "soft", "hard", "lumpy", "long"]
 
 size_of_stack :: Stack -> Int
@@ -32,6 +35,7 @@ cmd Add         = \x -> case x of
                            _ -> Nothing
 
 cmd (Randverb y)   = \x -> case x of
+
                            (Right i : Right j : x') -> Just (Right (j ++ " " ++ (randword verblist y) ++ " " ++ i) : x')
                            _ -> Nothing
 cmd (Randnoun y)   = \x -> case x of
@@ -45,4 +49,4 @@ randword :: [String] -> Int -> String
 randword [] _ = " "
 randword x y = x !! y
 
---make_IO :: [String] -> IO [String]
+
