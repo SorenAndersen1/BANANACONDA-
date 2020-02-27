@@ -12,3 +12,6 @@ For example we will be able to give the work count of a sentence or set conditio
 based on the word count.
 
 load Bananaconda.hs in GHCi
+
+you can run our successful ex2 example with 
+run ex2
