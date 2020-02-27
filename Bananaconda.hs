@@ -1,5 +1,10 @@
 module Bananaconda where
+import Prelude hiding (Drop)
 
+
+   
+
+type Prog = [Cmd]
 
 
 
@@ -8,21 +13,13 @@ type Prog = [Cmd]
 
 type Load = Stack -> Maybe Stack
 
-
 type Stack = [Either Int String]
-
-
-
-
-
-
 
 data Cmd = PushS String -- Grace
          | PushI Int -- Grace
          | Add -- Soren
          | Drop -- Grace
          | Equ -- Grace
-
          | IfElse Prog Prog -- Brian
          | Size_of_stack -- Reed
          | Error -- Brian
@@ -30,6 +27,9 @@ data Cmd = PushS String -- Grace
          | Randnoun Int
          | Randadj  Int
   deriving (Eq,Show)
+  
+ex2 :: Prog
+ex2 = [Randadj 2, Randnoun 4, Add]
 verblist = ["chase", "question", "reach", "kick", "yell"]
 nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
 adjectivelist = ["jumpy", "slimy", "moist", "cold", "hot", "bright", "hairy", "sticky", "loud", "colorful", "comfy", "soft", "hard", "lumpy", "long"]
@@ -42,28 +42,25 @@ size_of_stack (x:xs)  = 1 + size_of_stack xs
 cmd :: Cmd -> Load
 cmd Add         = \x -> case x of
                            (Right i : Right j : x') -> Just (Right (j ++ " " ++ i ) : x')
+                           (Left i : Left j : x') -> Just (Left (j + i ) : x')
                            _ -> Nothing
 
 cmd (PushS s) = \x -> Just (Right s : x)
 cmd (PushI i) = \x -> Just (Left i : x)
 
-cmd (Randverb y)   = \x -> case x of
-                           (Right i : Right j : x') -> Just (Right (randword verblist y) : x')
-                           _ -> Nothing
+
+cmd (Randverb y)   =  \x -> Just (Right  (randword verblist y) : x)
                            
-cmd (Randnoun y)   = \x -> case x of
-                           (Right i : Right j : x') -> Just (Right (j ++ " " ++ (randword nounlist y) ++ " " ++ i) : x')
-                           _ -> Nothing
+cmd (Randnoun y)   = \x ->  Just (Right  (randword nounlist y) : x)
                            
-cmd (Randadj y)   = \x -> case x of
-                           (Right i : Right j : x') -> Just (Right (j ++ " " ++ (randword adjectivelist y) ++ " " ++ i) : x')
-                           _ -> Nothing
+cmd (Randadj y)   = \x ->  Just (Right  (randword adjectivelist y) : x)
                            
 cmd (IfElse s ss) = \x -> case x of
                         (Left 1 : x') -> prog s x'   --true
                         (Left 0 : x') -> prog ss x'  --false
                         _ -> Nothing
                         
+
 
 
 randword :: [String] -> Int -> String
@@ -80,3 +77,5 @@ drop :: Stack -> Stack
 drop [] = [Left 0] --might have to change to error (underflow)
 drop (x : stack) = stack
 
+run :: Prog -> Maybe Stack
+run p = prog p []
