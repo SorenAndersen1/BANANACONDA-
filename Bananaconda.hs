@@ -7,19 +7,13 @@ import Prelude hiding (Drop)
 type Prog = [Cmd]
 
 
+
+type Prog = [Cmd]
+
+
 type Load = Stack -> Maybe Stack
 
-
-
-
 type Stack = [Either Int String]
-
-
-
-
-
-
-
 
 data Cmd = PushS String -- Grace
          | PushI Int -- Grace
@@ -33,6 +27,7 @@ data Cmd = PushS String -- Grace
          | Randnoun Int
          | Randadj  Int
   deriving (Eq,Show)
+  
 ex2 :: Prog
 ex2 = [Randadj 2, Randnoun 4, Add]
 verblist = ["chase", "question", "reach", "kick", "yell"]
@@ -53,6 +48,7 @@ cmd Add         = \x -> case x of
 cmd (PushS s) = \x -> Just (Right s : x)
 cmd (PushI i) = \x -> Just (Left i : x)
 
+
 cmd (Randverb y)   =  \x -> Just (Right  (randword verblist y) : x)
                            
 cmd (Randnoun y)   = \x ->  Just (Right  (randword nounlist y) : x)
@@ -64,6 +60,7 @@ cmd (IfElse s ss) = \x -> case x of
                         (Left 0 : x') -> prog ss x'  --false
                         _ -> Nothing
                         
+
 
 
 randword :: [String] -> Int -> String
