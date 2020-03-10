@@ -7,10 +7,6 @@ import Prelude hiding (Drop)
 type Prog = [Cmd]
 
 
-
-type Prog = [Cmd]
-
-
 type Load = Stack -> Maybe Stack
 
 type Stack = [Either Int String]
@@ -27,7 +23,8 @@ data Cmd = PushS String -- Grace
          | Randnoun Int
          | Randadj  Int
   deriving (Eq,Show)
-  
+ex1 :: Stack
+ex1 = [Right  "what", Left 1, Right "woo"]  
 ex2 :: Prog
 ex2 = [Randadj 2, Randnoun 4, Add]
 verblist = ["chase", "question", "reach", "kick", "yell"]
@@ -73,9 +70,24 @@ prog (c:p)    = \s -> case cmd c s of
                     Just s' -> prog p s'    --if cmd c s succeeds it returns a Just s', -> recursive call to rest of stack
                     _ -> Nothing
 
-drop :: Stack -> Stack
-drop [] = [Left 0] --might have to change to error (underflow)
-drop (x : stack) = stack
+drop_stack :: Stack -> Stack
+drop_stack [] = [Left 0] --might have to change to error (underflow)
+drop_stack (x : stack) = stack
+
+swapStack :: Stack -> Stack
+swapStack [] = [Left 0] --change to error
+swapStack (a : b : stack) = (b : a : stack)
+
+dupStack :: Stack -> Stack
+dupStack [] = [Left 0]
+dupStack (x : stack) = (x : x : stack)
+
+swapDropStack :: Stack -> Int -> Stack
+swapDropStack [] x = [Left 0]
+swapDropStack (x : stack) y = (stack !! y : stack)
+
+
+
 
 run :: Prog -> Maybe Stack
 run p = prog p []
