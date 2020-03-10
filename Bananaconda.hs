@@ -2,7 +2,7 @@ module Bananaconda where
 import Prelude hiding (Drop)
 
 
-   
+
 
 type Prog = [Cmd]
 
@@ -23,7 +23,7 @@ data Cmd = PushS String -- Grace
          | Randnoun Int
          | Randadj  Int
   deriving (Eq,Show)
-  
+
 ex2 :: Prog
 ex2 = [Randadj 2, Randnoun 4, Add]
 
@@ -47,16 +47,16 @@ cmd (PushI i) = \x -> Just (Left i : x)
 
 
 cmd (Randverb y)   =  \x -> Just (Right  (randword verblist y) : x)
-                           
+
 cmd (Randnoun y)   = \x ->  Just (Right  (randword nounlist y) : x)
-                           
+
 cmd (Randadj y)   = \x ->  Just (Right  (randword adjectivelist y) : x)
-                           
+
 cmd (IfElse s ss) = \x -> case x of
                         (Left 1 : x') -> prog s x'   --true
                         (Left 0 : x') -> prog ss x'  --false
                         _ -> Nothing
-                        
+
 
 
 
@@ -73,6 +73,14 @@ prog (c:p)    = \s -> case cmd c s of
 drop_stack :: Stack -> Stack
 drop_stack [] = [Left 0] --might have to change to error (underflow)
 drop_stack (x : stack) = stack
+
+getBottom :: Stack -> Either Int String
+--getBottom []  = error
+getBottom [Left i] = Left i
+getBottom [Right s] = Right s
+getBottom (_:xs) = getBottom xs
+
+
 
 run :: Prog -> Maybe Stack
 run p = prog p []
