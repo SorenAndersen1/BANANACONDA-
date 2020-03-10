@@ -1,9 +1,6 @@
 module Bananaconda where
 import Prelude hiding (Drop)
 
-
-   
-
 type Prog = [Cmd]
 
 
@@ -23,9 +20,14 @@ data Cmd = PushS String -- Grace
          | Randnoun Int
          | Randadj  Int
   deriving (Eq,Show)
+
+
+data Type = TBool | TInt | TError | TString
+  deriving (Eq, Show)
   
 ex2 :: Prog
 ex2 = [Randadj 2, Randnoun 4, Add]
+
 
 verblist = ["chase", "question", "reach", "kick", "yell"]
 nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
@@ -58,6 +60,25 @@ cmd (IfElse s ss) = \x -> case x of
                         _ -> Nothing
                         
 
+-- Typing Relation
+typeOf :: cmd -> Type
+typeOf (PushS s)     = TString
+typeOf (PushI i)     = TInt
+typeOf (Add s)       = case (typeOf s) of
+                        (TString)  -> TString
+                        _          -> TError
+typeOf (Randverb y)  = case (typeOf y) of
+                        (TString)  -> TString
+                        _           -> TError
+typeOf (Randnoun y)  = case (typeOf y) of
+                        (TString)  -> TString
+                        _           -> TError
+typeOf (Randadj y)  = case (typeOf y) of
+                        (TString)  -> TString
+                        _           -> TError
+typeOf (IfElse s ss) = case (typeOf s, typeOf ss) of
+                        (ts, tss) -> if ts == tss then ts else TError
+                        _         -> TError
 
 
 randword :: [String] -> Int -> String
@@ -76,3 +97,7 @@ drop_stack (x : stack) = stack
 
 run :: Prog -> Maybe Stack
 run p = prog p []
+
+ex2 = [PushI 0, IfElse [PushS "5", PushS "6", Add] [PushS "11"]]
+ex3 = [Left 1, Left 2]
+
