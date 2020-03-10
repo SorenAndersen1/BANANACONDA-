@@ -21,13 +21,11 @@ data Cmd = PushS String -- Grace
          | Randadj  Int
   deriving (Eq,Show)
 
-
 data Type = TBool | TInt | TError | TString
   deriving (Eq, Show)
   
 ex2 :: Prog
 ex2 = [Randadj 2, Randnoun 4, Add]
-
 
 verblist = ["chase", "question", "reach", "kick", "yell"]
 nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
@@ -81,6 +79,7 @@ typeOf (IfElse s ss) = case (typeOf s, typeOf ss) of
                         _         -> TError
 
 
+
 randword :: [String] -> Int -> String
 randword [] _ = " "
 randword x y = x !! y
@@ -98,6 +97,14 @@ drop_stack (x : stack) = stack
 run :: Prog -> Maybe Stack
 run p = prog p []
 
-ex2 = [PushI 0, IfElse [PushS "5", PushS "6", Add] [PushS "11"]]
-ex3 = [Left 1, Left 2]
+
+isPalindrome :: (Eq a) => [a] -> Bool
+isPalindrome xs = f [] xs xs
+  where
+    f ss xs []              = ss == xs
+    f ss (_:xs) [_]         = ss == xs
+    f ss (x:xs) (_:_:es)    = f (x:ss) xs es
+    
+ex3 = [PushI 0, IfElse [PushS "5", PushS "6", Add] [PushS "11"]]
+ex4 = [Left 1, Left 2]
 
