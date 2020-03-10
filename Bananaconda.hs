@@ -1,6 +1,7 @@
 module Bananaconda where
 import Prelude hiding (Drop)
 
+
 type Prog = [Cmd]
 
 
@@ -26,8 +27,6 @@ data Type = TBool | TInt | TError | TString | TProg
 
 ex2 :: Prog
 ex2 = [Randadj 2, Randnoun 4, Add]
-
-
 
 
 verblist = ["chase", "question", "reach", "kick", "yell"]
@@ -77,6 +76,7 @@ typeOf1 :: [Cmd] -> Type
 typeOf1 _        = TProg
 
 
+
 randword :: [String] -> Int -> String
 randword [] _ = " "
 randword x y = x !! y
@@ -91,8 +91,25 @@ drop_stack :: Stack -> Stack
 drop_stack [] = [Left 0] --might have to change to error (underflow)
 drop_stack (x : stack) = stack
 
+getBottom :: Stack -> Either Int String
+--getBottom []  = error
+getBottom [Left i] = Left i
+getBottom [Right s] = Right s
+getBottom (_:xs) = getBottom xs
+
+
+
 run :: Prog -> Maybe Stack
 run p = prog p []
 
 ex4 = [PushI 0, IfElse [PushS "5", PushS "6", Add] [PushS "11"]]
 ex5 = [Left 1, Left 2]
+
+isPalindrome :: (Eq a) => [a] -> Bool
+isPalindrome xs = f [] xs xs
+  where
+    f ss xs []              = ss == xs
+    f ss (_:xs) [_]         = ss == xs
+    f ss (x:xs) (_:_:es)    = f (x:ss) xs es
+    
+
