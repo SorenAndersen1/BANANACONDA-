@@ -28,6 +28,8 @@ ex2 :: Prog
 ex2 = [Randadj 2, Randnoun 4, Add]
 
 
+
+
 verblist = ["chase", "question", "reach", "kick", "yell"]
 nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
 adjectivelist = ["jumpy", "slimy", "moist", "cold", "hot", "bright", "hairy", "sticky", "loud", "colorful", "comfy", "soft", "hard", "lumpy", "long"]
@@ -54,9 +56,9 @@ cmd (Randnoun y)   = \x ->  Just (Right  (randword nounlist y) : x)
 cmd (Randadj y)   = \x ->  Just (Right  (randword adjectivelist y) : x)
 
 cmd (IfElse s ss) = \x -> case x of
-                      (Left 1 : x') -> prog s x'   --true
-                      (Left 0 : x') -> prog ss x'  --false
-                      _ -> Nothing
+                        (Left 1 : x') -> prog s x'   --true
+                        (Left 0 : x') -> prog ss x'  --false
+                        _ -> Nothing
 
 
 -- Typing Relation
@@ -69,7 +71,7 @@ typeOf (Randnoun y)  = TInt
 typeOf (Randadj y)   = TInt
 typeOf (IfElse s ss) = case (typeOf1 s, typeOf1 ss) of
                       (ts, tss) -> if ts == tss then ts else TError
-  
+
 
 typeOf1 :: [Cmd] -> Type
 typeOf1 _        = TProg
