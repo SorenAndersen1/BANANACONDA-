@@ -2,6 +2,8 @@ module Bananaconda where
 import Prelude hiding (Drop)
 
 
+
+
 type Prog = [Cmd]
 
 
@@ -22,11 +24,6 @@ data Cmd = PushS String -- Grace
          | Randnoun Int
          | Randadj  Int
   deriving (Eq,Show)
-
-
-data Type = TBool | TInt | TError | TString
-  deriving (Eq, Show)
-  
 
 ex2 :: Prog
 ex2 = [Randadj 2, Randnoun 4, Add]
@@ -61,8 +58,8 @@ cmd (IfElse s ss) = \x -> case x of
                         (Left 0 : x') -> prog ss x'  --false
                         _ -> Nothing
 
---ex5 :: prog
---ex5 = [While [PushS "hello", PushI 1]] [PushI 1]
+
+-- ex:   prog [While [PushI 24]] [Left 1, Left 1, Left 0, Left 1]
 
 cmd (While s) = \x -> case x of
                       (Left 1 : x') -> case (prog s x') of
@@ -72,26 +69,6 @@ cmd (While s) = \x -> case x of
                       _             -> Just x
 
 
-
--- Typing Relation
-typeOf :: cmd -> Type
-typeOf (PushS s)     = TString
-typeOf (PushI i)     = TInt
-typeOf (Add s)       = case (typeOf s) of
-                        (TString)  -> TString
-                        _          -> TError
-typeOf (Randverb y)  = case (typeOf y) of
-                        (TString)  -> TString
-                        _           -> TError
-typeOf (Randnoun y)  = case (typeOf y) of
-                        (TString)  -> TString
-                        _           -> TError
-typeOf (Randadj y)  = case (typeOf y) of
-                        (TString)  -> TString
-                        _           -> TError
-typeOf (IfElse s ss) = case (typeOf s, typeOf ss) of
-                        (ts, tss) -> if ts == tss then ts else TError
-                        _         -> TError
 
 
 
@@ -119,15 +96,3 @@ getBottom (_:xs) = getBottom xs
 
 run :: Prog -> Maybe Stack
 run p = prog p []
-
-isPalindrome :: (Eq a) => [a] -> Bool
-isPalindrome xs = f [] xs xs
-  where
-    f ss xs []              = ss == xs
-    f ss (_:xs) [_]         = ss == xs
-    f ss (x:xs) (_:_:es)    = f (x:ss) xs es
-    
-ex3 = [PushI 0, IfElse [PushS "5", PushS "6", Add] [PushS "11"]]
-ex4 = [Left 1, Left 2]
-
-
