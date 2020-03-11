@@ -15,7 +15,6 @@ data Cmd = PushS String -- Grace
 
          | PushI Int -- Grace
          | Add -- Soren
-         | Drop -- Grace
          | Equ -- Grace
          | IfElse Prog Prog -- Brian
          | While Prog  -- Reed
@@ -117,9 +116,9 @@ getBottom (_:xs) = getBottom xs
 
 
 
-drop_stack :: Stack -> Stack
-drop_stack [] = [Left 0] --might have to change to error (underflow)
-drop_stack (x : stack) = stack
+dropStack :: Stack -> Stack
+dropStack [] = [Left 0] --might have to change to error (underflow)
+dropStack (x : stack) = stack
 
 swapStack :: Stack -> Stack
 swapStack [] = [Left 0] --change to error
