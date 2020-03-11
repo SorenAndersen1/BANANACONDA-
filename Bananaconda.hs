@@ -12,16 +12,18 @@ type Load = Stack -> Maybe Stack
 type Stack = [Either Int String]
 
 data Cmd = PushS String -- Grace
-       | PushI Int -- Grace
-       | Add -- Soren
-       | Drop -- Grace
-       | Equ -- Grace
-       | IfElse Prog Prog -- Brian
-       | Size_of_stack -- Reed
-       | Error -- Brian
-       | Randverb Int
-       | Randnoun Int
-       | Randadj  Int
+
+         | PushI Int -- Grace
+         | Add -- Soren
+         | Drop -- Grace
+         | Equ -- Grace
+         | IfElse Prog Prog -- Brian
+         | While Prog  -- Reed
+         | Size_of_stack -- Reed
+         | Error -- Brian
+         | Randverb Int
+         | Randnoun Int
+         | Randadj  Int
   deriving (Eq,Show)
 
 
@@ -31,6 +33,7 @@ data Type = TBool | TInt | TError | TString | TProg
 
 ex1 :: Stack
 ex1 = [Right  "what", Left 1, Right "woo"]  
+
 
 
 ex2 :: Prog
@@ -66,6 +69,17 @@ cmd (IfElse s ss) = \x -> case x of
                         (Left 1 : x') -> prog s x'   --true
                         (Left 0 : x') -> prog ss x'  --false
                         _ -> Nothing
+
+
+
+-- ex:   prog [While [PushI 24]] [Left 1, Left 1, Left 0, Left 1]
+
+cmd (While s) = \x -> case x of
+                      (Left 1 : x') -> case (prog s x') of
+                                          Just xs -> prog [(While s)] (xs ++ (x'))
+                                          _       -> Nothing
+                      (Left 0 : x') -> Just x'
+                      _             -> Just x
 
 
 -- Typing Relation
@@ -128,7 +142,7 @@ swapDropStack (x : stack) y = (stack !! y : stack)
 
 run :: Prog -> Maybe Stack
 run p = prog p []
-=======
+
 
 run :: Prog -> Maybe Stack
 run p = prog p []
