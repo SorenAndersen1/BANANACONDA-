@@ -72,6 +72,7 @@ cmd (IfElse s ss) = \x -> case x of
 
 -- ex:   prog [While [PushI 24]] [Left 1, Left 1, Left 0, Left 1]
 
+--Takes element before IFElse cmd on the stack and if its a 1(true) runs 's' else runs 'ss'
 cmd (While s) = \x -> case x of
                       (Left 1 : x') -> case (prog s x') of
                                           Just xs -> prog [(While s)] (xs ++ (x'))
