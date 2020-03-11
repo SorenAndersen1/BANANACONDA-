@@ -39,6 +39,9 @@ ex1 = [Right  "what", Left 1, Right "woo"]
 ex2 :: Prog
 ex2 = [Randadj 2, Randnoun 4, Add]
 
+badex :: Prog
+badex = [Add]
+
 
 verblist = ["chase", "question", "reach", "kick", "yell"]
 nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
@@ -109,9 +112,9 @@ prog (c:p)    = \s -> case cmd c s of
                   Just s' -> prog p s'    --if cmd c s succeeds it returns a Just s', -> recursive call to rest of stack
                   _ -> Nothing
 
-drop_stack :: Stack -> Stack
-drop_stack [] = [Left 0] --might have to change to error (underflow)
-drop_stack (x : stack) = stack
+--drop_stack :: Stack -> Stack
+--drop_stack [] = [Left 0] --might have to change to error (underflow)
+--drop_stack (x : stack) = stack
 
 getBottom :: Stack -> Either Int String
 --getBottom []  = error
@@ -144,8 +147,8 @@ run :: Prog -> Maybe Stack
 run p = prog p []
 
 
-run :: Prog -> Maybe Stack
-run p = prog p []
+--run :: Prog -> Maybe Stack
+--run p = prog p []
 
 ex4 = [PushI 0, IfElse [PushS "5", PushS "6", Add] [PushS "11"]]
 ex5 = [Left 1, Left 2]

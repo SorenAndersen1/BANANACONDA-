@@ -17,3 +17,11 @@ currently we have 5 verbs, 15 nouns, and 15 adjectives. When requesting a random
 
 you can run our successful ex2 example with
 run ex2
+
+output: Just [Right "moist tree"]
+
+
+You can run a bad example with:
+run badex
+
+Output: Nothing
