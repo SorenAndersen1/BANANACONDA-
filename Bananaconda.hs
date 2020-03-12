@@ -15,12 +15,10 @@ data Cmd = PushS String -- Grace
 
          | PushI Int -- Grace
          | Add -- Soren
-         | Drop -- Grace
          | Equ -- Grace
          | IfElse Prog Prog -- Brian
          | While Prog  -- Reed
          | Size_of_stack -- Reed
-         | Error -- Brian
          | Randverb Int
          | Randnoun Int
          | Randadj  Int
@@ -77,6 +75,7 @@ cmd (IfElse s ss) = \x -> case x of
 
 -- ex:   prog [While [PushI 24]] [Left 1, Left 1, Left 0, Left 1]
 
+--Takes element before IFElse cmd on the stack and if its a 1(true) runs 's' else runs 'ss'
 cmd (While s) = \x -> case x of
                       (Left 1 : x') -> case (prog s x') of
                                           Just xs -> prog [(While s)] (xs ++ (x'))
@@ -114,28 +113,29 @@ prog (c:p)    = \s -> case cmd c s of
 
 
 getBottom :: Stack -> Either Int String
---getBottom []  = error
 getBottom [Left i] = Left i
 getBottom [Right s] = Right s
 getBottom (_:xs) = getBottom xs
 
 
+data ErrorHandled = STK Stack | Error
+  deriving(Eq,Show)
 
-drop_stack :: Stack -> Stack
-drop_stack [] = [Left 0] --might have to change to error (underflow)
-drop_stack (x : stack) = stack
+dropStack :: Stack -> ErrorHandled
+dropStack [] = Error
+dropStack (x : stack) = (STK stack)
 
-swapStack :: Stack -> Stack
-swapStack [] = [Left 0] --change to error
-swapStack (a : b : stack) = (b : a : stack)
+swapStack :: Stack -> ErrorHandled
+swapStack [] = Error
+swapStack (a : b : stack) = (STK (b : a : stack))
 
-dupStack :: Stack -> Stack
-dupStack [] = [Left 0]
-dupStack (x : stack) = (x : x : stack)
+dupStack :: Stack -> ErrorHandled
+dupStack [] = Error
+dupStack (x : stack) = (STK (x : x : stack))
 
-swapDropStack :: Stack -> Int -> Stack
-swapDropStack [] x = [Left 0]
-swapDropStack (x : stack) y = (stack !! y : stack)
+swapDropStack :: Stack -> Int -> ErrorHandled
+swapDropStack [] x = Error
+swapDropStack (x : stack) y = (STK (stack !! y : stack))
 
 
 
