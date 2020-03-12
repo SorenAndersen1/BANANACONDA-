@@ -11,20 +11,17 @@ type Load = Stack -> Maybe Stack
 
 type Stack = [Either Int String]
 
-data Cmd = PushS String -- Grace
-
-         | PushI Int -- Grace
-         | Add -- Soren
-         | Equ -- Grace
-         | IfElse Prog Prog -- Brian
-         | While Prog  -- Reed
-         | Size_of_stack -- Reed
+data Cmd = PushS String
+         | PushI Int
+         | Add
+         | Equ
+         | IfElse Prog Prog
+         | While Prog
+         | Size_of_stack
          | Randverb Int
          | Randnoun Int
          | Randadj  Int
   deriving (Eq,Show)
-
-
 
 data Type = TBool | TInt | TError | TString | TProg
   deriving (Eq, Show)
@@ -32,42 +29,37 @@ data Type = TBool | TInt | TError | TString | TProg
 ex1 :: Stack
 ex1 = [Right  "what", Left 1, Right "woo"]
 
-
-
 ex2 :: Prog
 ex2 = [Randadj 2, Randnoun 4, Add]
 
+ex4 = [PushI 0, IfElse [PushS "5", PushS "6", Add] [PushS "11"]]
+
+ex5 = [Left 1, Left 2]
+
 badex :: Prog
 badex = [Add]
-
 
 verblist = ["chase", "question", "reach", "kick", "yell"]
 nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
 adjectivelist = ["jumpy", "slimy", "moist", "cold", "hot", "bright", "hairy", "sticky", "loud", "colorful", "comfy", "soft", "hard", "lumpy", "long"]
 
-
 -- This is a basic function that just returns the size of the current stack
-size_of_stack :: Stack -> Int
-size_of_stack []      = 0
-size_of_stack (x:xs)  = 1 + size_of_stack xs
-
+sizeOfStack :: Stack -> Int
+sizeOfStack []      = 0
+sizeOfStack (x:xs)  = 1 + sizeOfStack xs
 
 cmd :: Cmd -> Load
 cmd Add         = \x -> case x of
                          (Right i : Right j : x') -> Just (Right (j ++ " " ++ i ) : x')
                          (Left i : Left j : x') -> Just (Left (j + i ) : x')
                          _ -> Nothing
-
+--Pushes a string onto the stack
 cmd (PushS s) = \x -> Just (Right s : x)
+--Pushes an int onto the stack
 cmd (PushI i) = \x -> Just (Left i : x)
-
-
 cmd (Randverb y)   =  \x -> Just (Right  (randword verblist y) : x)
-
 cmd (Randnoun y)   = \x ->  Just (Right  (randword nounlist y) : x)
-
 cmd (Randadj y)   = \x ->  Just (Right  (randword adjectivelist y) : x)
-
 --Takes element before IFElse cmd on the stack and if its a 1(true) runs 's' else runs 'ss'
 cmd (IfElse s ss) = \x -> case x of
                         (Left 1 : x') -> prog s x'   --true
@@ -106,8 +98,6 @@ typeOf (IfElse s ss) = case (typeOf1 s, typeOf1 ss) of
 typeOf1 :: [Cmd] -> Type
 typeOf1 _        = TProg
 
-
-
 randword :: [String] -> Int -> String
 randword [] _ = " "
 randword x y = x !! y
@@ -125,10 +115,12 @@ getBottom [Left i] = Left i
 getBottom [Right s] = Right s
 getBottom (_:xs) = getBottom xs
 
-
+-- Created an error or stack data type in order to create errors when there is an empty stack
 data ErrorHandled = STK Stack | Error
   deriving(Eq,Show)
 
+-- Pops the top element off the stack and deletes it
+-- If the stack is empty return an Error
 dropStack :: Stack -> ErrorHandled
 dropStack [] = Error
 dropStack (x : stack) = (STK stack)
@@ -146,16 +138,12 @@ swapDropStack [] x = Error
 swapDropStack (x : stack) y = (STK (stack !! y : stack))
 
 
-
-
 run :: Prog -> Maybe Stack
 run p = prog p []
 
 
-
-ex4 = [PushI 0, IfElse [PushS "5", PushS "6", Add] [PushS "11"]]
-ex5 = [Left 1, Left 2]
-
+-- Check if a list on the stack is a palindrome
+-- return true if it is, return false if it is not
 isPalindrome :: (Eq a) => [a] -> Bool
 isPalindrome xs = f [] xs xs
   where
