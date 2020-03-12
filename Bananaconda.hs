@@ -98,6 +98,7 @@ typeOf (IfElse s ss) = case (typeOf1 s, typeOf1 ss) of
 typeOf1 :: [Cmd] -> Type
 typeOf1 _        = TProg
 
+-- Takes in a word list and returns a word at the desired int.
 randword :: [String] -> Int -> String
 randword [] _ = " "
 randword x y = x !! y
@@ -125,14 +126,18 @@ dropStack :: Stack -> ErrorHandled
 dropStack [] = Error
 dropStack (x : stack) = (STK stack)
 
-swapStack :: Stack -> ErrorHandled
+-- Swaps top two elements of Stack
+swapStack :: Stack -> ErrorHandled 
 swapStack [] = Error
 swapStack (a : b : stack) = (STK (b : a : stack))
 
+-- Duplicates the top of the stack, adding it to the top of the stack
 dupStack :: Stack -> ErrorHandled
 dupStack [] = Error
 dupStack (x : stack) = (STK (x : x : stack))
 
+-- This takes in an int as well as a stack, taking the element at the given int's position, then swapping it with the first
+-- element, then dropping the top element.
 swapDropStack :: Stack -> Int -> ErrorHandled
 swapDropStack [] x = Error
 swapDropStack (x : stack) y = (STK (stack !! y : stack))
