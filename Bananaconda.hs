@@ -30,7 +30,7 @@ data Type = TBool | TInt | TError | TString | TProg
   deriving (Eq, Show)
 
 ex1 :: Stack
-ex1 = [Right  "what", Left 1, Right "woo"]  
+ex1 = [Right  "what", Left 1, Right "woo"]
 
 
 
@@ -45,6 +45,8 @@ verblist = ["chase", "question", "reach", "kick", "yell"]
 nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
 adjectivelist = ["jumpy", "slimy", "moist", "cold", "hot", "bright", "hairy", "sticky", "loud", "colorful", "comfy", "soft", "hard", "lumpy", "long"]
 
+
+-- This is a basic function that just returns the size of the current stack
 size_of_stack :: Stack -> Int
 size_of_stack []      = 0
 size_of_stack (x:xs)  = 1 + size_of_stack xs
@@ -66,6 +68,7 @@ cmd (Randnoun y)   = \x ->  Just (Right  (randword nounlist y) : x)
 
 cmd (Randadj y)   = \x ->  Just (Right  (randword adjectivelist y) : x)
 
+--Takes element before IFElse cmd on the stack and if its a 1(true) runs 's' else runs 'ss'
 cmd (IfElse s ss) = \x -> case x of
                         (Left 1 : x') -> prog s x'   --true
                         (Left 0 : x') -> prog ss x'  --false
@@ -75,7 +78,11 @@ cmd (IfElse s ss) = \x -> case x of
 
 -- ex:   prog [While [PushI 24]] [Left 1, Left 1, Left 0, Left 1]
 
---Takes element before IFElse cmd on the stack and if its a 1(true) runs 's' else runs 'ss'
+-- This function is our while loop which satisfies teh looping requirement
+-- If the top of the stack is a true value the loop runs the given program.
+-- If that program returns a valid stack the while function is called again with the new stack added to the
+-- existing stack.
+-- If the while condition is false the function just returns the current stack
 cmd (While s) = \x -> case x of
                       (Left 1 : x') -> case (prog s x') of
                                           Just xs -> prog [(While s)] (xs ++ (x'))
@@ -111,7 +118,8 @@ prog (c:p)    = \s -> case cmd c s of
                   Just s' -> prog p s'    --if cmd c s succeeds it returns a Just s', -> recursive call to rest of stack
                   _ -> Nothing
 
-
+-- This function returns whatever element is at the bottom of the stack.
+-- The function doesn't remove this element but just gives the value
 getBottom :: Stack -> Either Int String
 getBottom [Left i] = Left i
 getBottom [Right s] = Right s
@@ -154,6 +162,3 @@ isPalindrome xs = f [] xs xs
     f ss xs []              = ss == xs
     f ss (_:xs) [_]         = ss == xs
     f ss (x:xs) (_:_:es)    = f (x:ss) xs es
-    
-
-
