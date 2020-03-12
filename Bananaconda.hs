@@ -27,7 +27,7 @@ data Type = TBool | TInt | TError | TString | TProg
   deriving (Eq, Show)
 
 ex1 :: Stack
-ex1 = [Right  "what", Left 1, Right "woo"]  
+ex1 = [Right  "what", Left 1, Right "woo"]
 
 ex2 :: Prog
 ex2 = [Randadj 2, Randnoun 4, Add]
@@ -36,11 +36,14 @@ ex4 = [PushI 0, IfElse [PushS "5", PushS "6", Add] [PushS "11"]]
 
 ex5 = [Left 1, Left 2]
 
+badex :: Prog
+badex = [Add]
 
 verblist = ["chase", "question", "reach", "kick", "yell"]
 nounlist = ["car", "fire extinguisher", "ball", "pool", "tree", "house", "dog", "snake", "computer", "phone", "road", "light", "cave", "baby", "camper"]
 adjectivelist = ["jumpy", "slimy", "moist", "cold", "hot", "bright", "hairy", "sticky", "loud", "colorful", "comfy", "soft", "hard", "lumpy", "long"]
 
+-- This is a basic function that just returns the size of the current stack
 sizeOfStack :: Stack -> Int
 sizeOfStack []      = 0
 sizeOfStack (x:xs)  = 1 + sizeOfStack xs
@@ -50,17 +53,14 @@ cmd Add         = \x -> case x of
                          (Right i : Right j : x') -> Just (Right (j ++ " " ++ i ) : x')
                          (Left i : Left j : x') -> Just (Left (j + i ) : x')
                          _ -> Nothing
-
+--Pushes a string onto the stack
 cmd (PushS s) = \x -> Just (Right s : x)
+--Pushes an int onto the stack
 cmd (PushI i) = \x -> Just (Left i : x)
-
-
 cmd (Randverb y)   =  \x -> Just (Right  (randword verblist y) : x)
-
 cmd (Randnoun y)   = \x ->  Just (Right  (randword nounlist y) : x)
-
 cmd (Randadj y)   = \x ->  Just (Right  (randword adjectivelist y) : x)
-
+--Takes element before IFElse cmd on the stack and if its a 1(true) runs 's' else runs 'ss'
 cmd (IfElse s ss) = \x -> case x of
                         (Left 1 : x') -> prog s x'   --true
                         (Left 0 : x') -> prog ss x'  --false
@@ -70,7 +70,11 @@ cmd (IfElse s ss) = \x -> case x of
 
 -- ex:   prog [While [PushI 24]] [Left 1, Left 1, Left 0, Left 1]
 
---Takes element before IFElse cmd on the stack and if its a 1(true) runs 's' else runs 'ss'
+-- This function is our while loop which satisfies teh looping requirement
+-- If the top of the stack is a true value the loop runs the given program.
+-- If that program returns a valid stack the while function is called again with the new stack added to the
+-- existing stack.
+-- If the while condition is false the function just returns the current stack
 cmd (While s) = \x -> case x of
                       (Left 1 : x') -> case (prog s x') of
                                           Just xs -> prog [(While s)] (xs ++ (x'))
@@ -104,6 +108,8 @@ prog (c:p)    = \s -> case cmd c s of
                   Just s' -> prog p s'    --if cmd c s succeeds it returns a Just s', -> recursive call to rest of stack
                   _ -> Nothing
 
+-- This function returns whatever element is at the bottom of the stack.
+-- The function doesn't remove this element but just gives the value
 getBottom :: Stack -> Either Int String
 getBottom [Left i] = Left i
 getBottom [Right s] = Right s
@@ -135,6 +141,7 @@ swapDropStack (x : stack) y = (STK (stack !! y : stack))
 run :: Prog -> Maybe Stack
 run p = prog p []
 
+
 -- Check if a list on the stack is a palindrome
 -- return true if it is, return false if it is not
 isPalindrome :: (Eq a) => [a] -> Bool
@@ -143,6 +150,3 @@ isPalindrome xs = f [] xs xs
     f ss xs []              = ss == xs
     f ss (_:xs) [_]         = ss == xs
     f ss (x:xs) (_:_:es)    = f (x:ss) xs es
-    
-
-
